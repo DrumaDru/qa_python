@@ -18,7 +18,16 @@ class TestBooksCollector:
 
         # проверяем, что добавилось именно две
         # словарь books_rating, который нам возвращает метод get_books_rating, имеет длину 2
-        assert len(collector.get_books_rating()) == 2
-
+        assert len(list(collector.books_genre.keys())) == 2
+c
     # напиши свои тесты ниже
     # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
+
+    # тест добавления новой книиги, если ее нет в списке
+    def test_add_new_book_one_name_add_one_book(self):
+        # создаем экземпляр (объект) класса BooksCollector
+        collector = BooksCollector()
+
+        collector.add_new_book('Хоббит')
+
+        assert list(collector.books_genre.keys())[0] == 'Хоббит' and list(collector.books_genre.values())[0] == ''
