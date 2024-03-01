@@ -55,25 +55,3 @@ class BooksCollector:
     # получаем список Избранных книг
     def get_list_of_favorites_books(self):
         return self.favorites
-
-book_collection = BooksCollector()
-book_collection.add_new_book("Фантомас")
-print(book_collection.books_genre)
-book_collection.add_new_book("Ебаный рот этого казино")
-print(book_collection.books_genre)
-book_collection.set_book_genre("Фантомас", 'Детективы')
-book_collection.set_book_genre("Ебаный рот этого казино", 'Детективы')
-print(book_collection.books_genre)
-print(book_collection.get_book_genre('Фантомас'))
-print(book_collection.get_books_with_specific_genre('Детективы'))
-print(book_collection.get_books_genre())
-print(book_collection.get_books_for_children())
-book_collection.add_new_book("Рик и Морти")
-book_collection.set_book_genre("Рик и Морти", 'Мультфильмы')
-print(book_collection.get_books_genre())
-print(book_collection.get_books_for_children())
-book_collection.add_book_in_favorites("Фантомас")
-book_collection.add_book_in_favorites("Рик и Морти")
-print(book_collection.favorites)
-book_collection.delete_book_from_favorites("Фантомас")
-print(book_collection.get_list_of_favorites_books())
