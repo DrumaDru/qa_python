@@ -9,37 +9,30 @@ class TestBooksCollector:
     # напиши свои тесты ниже
     # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
     def test_add_new_book_one_name_add_one_book(self):
-        # создаем экземпляр (объект) класса BooksCollector
         collector = BooksCollector()
-
-        collector.add_new_book('Хоббит')
-
-        assert list(collector.books_genre.keys())[0] == 'Хоббит' and list(collector.books_genre.values())[0] == ''
-
-    def test_set_book_genre_check_name_and_genre(self):
-
-        collector = BooksCollector()
-        collector.add_new_book('Хоббит')
-        collector.set_book_genre('Хоббит','Фантастика')
         name = 'Хоббит'
-        genre = 'Фантастика'
-        assert name in collector.books_genre and genre in collector.genre
+
+        collector.add_new_book(name)
+
+        assert collector.get_book_genre(name) == ''
 
     def test_set_book_genre_exist_name_set_genre(self):
         collector = BooksCollector()
-        collector.add_new_book('Хоббит')
-        collector.set_book_genre('Хоббит', 'Фантастика')
-
-        assert list(collector.books_genre.values())[0] == 'Фантастика'
-
-    def test_get_book_genre_exist_name_get_genre(self):
-        collector = BooksCollector()
-        collector.add_new_book('Хоббит')
-        collector.set_book_genre('Хоббит', 'Фантастика')
-        collector.get_book_genre('Хоббит')
         name = 'Хоббит'
+        genre = 'Фантастика'
 
-        assert collector.books_genre.get(name) == 'Фантастика'
+        collector.add_new_book(name)
+        collector.set_book_genre(name, genre)
+
+        assert collector.get_book_genre(name) == genre
+
+#так как выше я уже проверяю, работу функции get_book_genre
+#добавил дополнительную проверку, что при вводе несуществующего имени, функция ничего возвращает.
+    def test_get_book_genre_fake_name_get_genre(self):
+        collector = BooksCollector()
+        fake_name = 'Буратино'
+
+        assert collector.get_book_genre(fake_name) == None
 
 
     @pytest.mark.parametrize(
@@ -54,81 +47,71 @@ class TestBooksCollector:
 
         collector.add_new_book(name)
         collector.set_book_genre(name, genre)
-        list_books = collector.get_books_with_specific_genre(genre)
-        assert  name in list_books
+
+        assert name in collector.get_books_with_specific_genre(genre)
 
     def test_get_books_genre_get_books_list(self):
         collector = BooksCollector()
 
-        collector.get_books_genre()
         assert collector.get_books_genre() == collector.books_genre
 
-
+#проверяю, что детская книга попала в список books_for_children
     def test_get_books_for_children_get_children_books(self):
         collector = BooksCollector()
-
-        collector.add_new_book('Шерлок Холмс')
-        collector.add_new_book('Буратино')
-        collector.set_book_genre('Шерлок Холмс', 'Детективы')
-        collector.set_book_genre('Буратино', 'Мультфильмы')
-        children_books = collector.get_books_for_children()
-        adult_book = 'Шерлок Холмс'
         children_book = 'Буратино'
-        assert (children_book in children_books) and (adult_book not in children_books)
+        genre = 'Мультфильмы'
 
+        collector.add_new_book(children_book)
+        collector.set_book_genre(children_book, genre)
+
+        assert children_book in collector.get_books_for_children()
+
+# проверяю, что взрослая книга не попала в список books_for_children
+    def test_get_books_for_children_adult_book_not_in_children_books(self):
+        collector = BooksCollector()
+        adult_book = 'Шерлок Холмс'
+        genre = 'Детективы'
+        collector.add_new_book(adult_book)
+        collector.set_book_genre(adult_book, genre)
+
+        assert adult_book not in collector.get_books_for_children()
+
+#так как функция принимает на входе тольок name и то, что проврку добавления жанар к имения я уже проверял выше
+#проверил функция только с именем в списке book_ganre
     @pytest.mark.parametrize(
-        'name, genre', [
-            ['Хоббит', 'Фантастика'],
-            ['Шерлок Холмс', 'Детективы'],
-            ['Буратино', 'Мультфильмы'],
-        ]
+        'name', ['Хоббит','Шерлок Холмс','Буратино']
     )
-    def test_add_book_in_favorites_exist_name_add_in_favorites(self, name, genre):
+    def test_add_book_in_favorites_exist_name_add_in_favorites(self, name):
         collector = BooksCollector()
 
         collector.add_new_book(name)
-        collector.set_book_genre(name, genre)
         collector.add_book_in_favorites(name)
-        favorites_list = collector.favorites
 
-        assert (name in list(collector.books_genre.keys())) and (name in favorites_list)
+        assert  name in collector.favorites
 
     @pytest.mark.parametrize(
-        'name, genre', [
-            ['Хоббит', 'Фантастика'],
-            ['Шерлок Холмс', 'Детективы'],
-            ['Буратино', 'Мультфильмы'],
-        ]
+        'name', ['Хоббит','Шерлок Холмс','Буратино']
     )
-    def test_delete_book_from_favorites_exist_name_delete_book(self, name, genre):
+    def test_delete_book_from_favorites_exist_name_delete_book(self, name):
         collector = BooksCollector()
-
-        collector.add_new_book(name)
-        collector.set_book_genre(name, genre)
-        collector.add_book_in_favorites(name)
-        favorites_list = collector.favorites
-        collector.delete_book_from_favorites('Шерлок Холмс')
         remove_name = 'Шерлок Холмс'
 
+        collector.add_new_book(name)
+        collector.add_book_in_favorites(name)
+        collector.delete_book_from_favorites(remove_name)
 
-        assert remove_name not in favorites_list
+        assert remove_name not in collector.favorites
 
     @pytest.mark.parametrize(
-        'name, genre', [
-            ['Хоббит', 'Фантастика'],
-            ['Шерлок Холмс', 'Детективы'],
-            ['Буратино', 'Мультфильмы'],
-        ]
+        'name', ['Хоббит', 'Шерлок Холмс', 'Буратино']
     )
-    def test_get_list_of_favorites_books_get_favorites_books(self, name, genre):
+    def test_get_list_of_favorites_books_get_favorites_books(self, name):
         collector = BooksCollector()
 
         collector.add_new_book(name)
-        collector.set_book_genre(name, genre)
         collector.add_book_in_favorites(name)
-        favorites_list = collector.favorites
 
-        assert collector.get_list_of_favorites_books() == favorites_list
+        assert collector.get_list_of_favorites_books() == collector.favorites
 
 
 
